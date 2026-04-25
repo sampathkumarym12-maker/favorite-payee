@@ -2,6 +2,8 @@ package com.payee.favorite_payee.controllers;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -28,15 +30,19 @@ public class PayeeController {
 	}
 
 	@PostMapping
-	public PayeeResponseDTO createPayee(@RequestBody PayeeRequestDTO request) {
+	public ResponseEntity<PayeeResponseDTO> createPayee(@RequestBody PayeeRequestDTO request) {
 
-		return payeeService.createPayee(request);
+	    PayeeResponseDTO response = payeeService.createPayee(request);
+
+	    return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
 	@PutMapping("/{id}")
-	public PayeeResponseDTO updatePayee(@PathVariable Long id, @RequestBody PayeeRequestDTO request) {
+	public ResponseEntity<PayeeResponseDTO> updatePayee(@PathVariable Long id, @RequestBody PayeeRequestDTO request) {
 
-		return payeeService.updatePayee(id, request);
+		PayeeResponseDTO response = payeeService.updatePayee(id, request);
+
+		return ResponseEntity.ok(response);
 	}
 
 	@DeleteMapping("/{id}")

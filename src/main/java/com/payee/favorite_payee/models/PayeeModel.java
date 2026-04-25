@@ -11,7 +11,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
-import lombok.Setter;
 
 @Entity
 @Data
@@ -24,6 +23,7 @@ public class PayeeModel {
 
 	@Column(name = "p_account_name")
 	private String accountName;
+	
 	@Column(name = "p_nickname")
 	private String nickname;
 
@@ -40,6 +40,9 @@ public class PayeeModel {
 
 	@Column(name = "p_is_deleted")
 	private Boolean isDeleted;
+	
+	@Column(name = "p_bank_name")
+	private String bankName;
 
 
 //	public PayeeResponseDTO toPayeeResponseDTO(){
