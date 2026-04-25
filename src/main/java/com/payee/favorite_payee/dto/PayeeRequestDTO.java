@@ -5,12 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Data
-@Setter
-@Getter
 public class PayeeRequestDTO {
 	private String accountName;
 	private String nickName;
 	private String iban;
 	private String bankName;
 	private String customerId;
+	private Boolean isFavorite;
 }

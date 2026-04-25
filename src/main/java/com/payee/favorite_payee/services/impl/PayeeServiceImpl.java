@@ -18,21 +18,18 @@ import java.util.stream.Collectors;
 public class PayeeServiceImpl implements PayeeService {
 
     private final PayeeRepository payeeRepository;
-    
-    public PayeeServiceImpl(PayeeRepository payeeRepository) {
-        this.payeeRepository = payeeRepository;
-    }
+
 
     @Override
     public PayeeResponseDTO createPayee(PayeeRequestDTO request) {
 
         PayeeModel payee = new PayeeModel();
         payee.setAccountName(request.getAccountName());
-        payee.setNickname(request.getNickname());
+        payee.setNickname(request.getNickName());
         payee.setIban(request.getIban());
         payee.setIsFavorite(Boolean.TRUE.equals(request.getIsFavorite()));
         payee.setIsDeleted(false);
-        payee.setCustomerModel(customer);
+        payee.setCustomerModel(null);
 
         return mapToDTO(payeeRepository.save(payee));
     }
@@ -44,7 +41,7 @@ public class PayeeServiceImpl implements PayeeService {
                 .orElseThrow(() -> new EntityNotFoundException("Payee not found"));
 
         payee.setAccountName(request.getAccountName());
-        payee.setNickname(request.getNickname());
+        payee.setNickname(request.getNickName());
         payee.setIban(request.getIban());
 
         if (request.getIsFavorite() != null) {
