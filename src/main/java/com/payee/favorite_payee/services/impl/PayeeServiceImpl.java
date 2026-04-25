@@ -2,6 +2,7 @@ package com.payee.favorite_payee.services.impl;
 
 import com.payee.favorite_payee.dto.PayeeRequestDTO;
 import com.payee.favorite_payee.dto.PayeeResponseDTO;
+import com.payee.favorite_payee.models.BankCodeMapping;
 import com.payee.favorite_payee.models.CustomerModel;
 import com.payee.favorite_payee.models.PayeeModel;
 import com.payee.favorite_payee.repository.BankCodeMappingRepository;
@@ -15,7 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,7 +41,7 @@ public class PayeeServiceImpl implements PayeeService {
         payee.setNickname(request.getNickName());
         payee.setIban(request.getIban());
         payee.setBankName(bankName); 
-        payee.setIsFavorite(false);
+        payee.setIsFavorite(request.getIsFavorite());
         payee.setIsDeleted(false);
         payee.setCustomerModel(customerService.getCustomerModelById(request.getCustomerId()));
 
@@ -105,7 +106,7 @@ public class PayeeServiceImpl implements PayeeService {
     public PayeeModel getPayeeModelById(Long id) {
 
         return payeeRepository.findById(id)
-                .orElseThrow(() -> new HttpStatusCodeException(HttpStatus.NOT_FOUND, "Payee not found") {
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Payee not found") {
                 });
     }
 
@@ -149,10 +150,10 @@ public class PayeeServiceImpl implements PayeeService {
             throw new IllegalArgumentException("Invalid IBAN format");
         }
 
-        String bankCode = iban.substring(4, 8);
+        String bankCode = iban.substring(4, 8).toUpperCase().trim();
 
         return bankRepo.findByCode(bankCode)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid bank code in IBAN"))
-                .getBankName();
+                .map(BankCodeMapping::getBankName)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid bank code: " + bankCode));
     }
 }

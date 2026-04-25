@@ -2,6 +2,7 @@ package com.payee.favorite_payee.controllers;
 
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +21,7 @@ import com.payee.favorite_payee.services.PayeeService;
 
 @RestController
 @RequestMapping("/api/payees")
+@Slf4j
 public class PayeeController {
 
 	private final PayeeService payeeService;
@@ -28,7 +30,7 @@ public class PayeeController {
 		this.payeeService = payeeService;
 	}
 
-	@PostMapping
+	@PostMapping("/")
 	public ResponseEntity<PayeeResponseDTO> createPayee(@RequestBody PayeeRequestDTO request) {
 
 	    PayeeResponseDTO response = payeeService.createPayee(request);
@@ -50,8 +52,8 @@ public class PayeeController {
 		return "Payee deleted successfully";
 	}
 
-	@GetMapping
-	public List<PayeeResponseDTO> getAllPayees(@RequestParam Integer pageNumber, @RequestParam Integer pageSize, @RequestParam Boolean isFavorite) {
+	@GetMapping("/")
+	public List<PayeeResponseDTO> getAllPayees(@RequestParam(required = false) Integer pageNumber, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) Boolean isFavorite) {
 		return payeeService.getPayeesPaginated(1L, pageNumber, pageSize, isFavorite);
 	}
 

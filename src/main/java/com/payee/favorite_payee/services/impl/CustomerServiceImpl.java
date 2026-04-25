@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +18,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerModel getCustomerModelById(Long id) {
-        return customerRepository.findById(id).orElseThrow(()-> new HttpStatusCodeException(HttpStatus.NOT_FOUND, "Customer not found") {
+        return customerRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found") {
         });
     }
 }
