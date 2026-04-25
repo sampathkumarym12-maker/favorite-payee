@@ -1,8 +1,6 @@
 package com.payee.favorite_payee.dto;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 @Data
 public class PayeeRequestDTO {
