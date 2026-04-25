@@ -8,7 +8,9 @@ import com.payee.favorite_payee.repository.PayeeRepository;
 import com.payee.favorite_payee.services.PayeeService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -70,15 +72,24 @@ public class PayeeServiceImpl implements PayeeService {
                 .collect(Collectors.toList());
     }
 
+//    @Override
+//    public PayeeResponseDTO toggleFavorite(Long id, Boolean isFavorite) {
+//
+//        PayeeModel payee = payeeRepository.findById(id)
+//                .orElseThrow(() -> new EntityNotFoundException("Payee not found"));
+//
+//        payee.setIsFavorite(isFavorite);
+//
+//        return mapToDTO(payeeRepository.save(payee));
+//    }
+
     @Override
-    public PayeeResponseDTO toggleFavorite(Long id, Boolean isFavorite) {
+    public PayeeResponseDTO getPayeeById(Long id) {
 
-        PayeeModel payee = payeeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Payee not found"));
-
-        payee.setIsFavorite(isFavorite);
-
-        return mapToDTO(payeeRepository.save(payee));
+         PayeeModel payeeModel = payeeRepository.findById(id)
+                .orElseThrow(() -> new HttpStatusCodeException(HttpStatus.NOT_FOUND, "Payee not found") {
+                });
+         return mapToDTO(payeeModel);
     }
 
     private PayeeResponseDTO mapToDTO(PayeeModel payee) {

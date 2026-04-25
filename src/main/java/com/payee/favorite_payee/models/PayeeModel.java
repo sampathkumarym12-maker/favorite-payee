@@ -2,6 +2,7 @@ package com.payee.favorite_payee.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import com.payee.favorite_payee.dto.PayeeResponseDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -39,5 +40,16 @@ public class PayeeModel {
 
 	@Column(name = "p_is_deleted")
 	private Boolean isDeleted;
+
+
+//	public PayeeResponseDTO toPayeeResponseDTO(){
+//		PayeeResponseDTO payeeResponseDTO = new PayeeResponseDTO();
+//		payeeResponseDTO.setId(this.id);
+//		payeeResponseDTO.setAccountName(this.getAccountName());
+//		payeeResponseDTO.setNickname(this.getNickname());
+//		payeeResponseDTO.setIban(this.getIban());
+//		payeeResponseDTO.setIsFavorite(this.getIsFavorite());
+//		return  payeeResponseDTO;
+//	}
 
 }
