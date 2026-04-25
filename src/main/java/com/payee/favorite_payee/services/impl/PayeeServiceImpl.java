@@ -142,13 +142,18 @@ public class PayeeServiceImpl implements PayeeService {
             throw new IllegalArgumentException("IBAN max length is 20");
         }
 
+        if(iban.length() < 15){
+            throw new IllegalArgumentException("IBAN min length is 15");
+        }
+
+        if (!Character.isLetter(iban.charAt(0)) || !Character.isLetter(iban.charAt(1))) {
+            throw new IllegalArgumentException("IBAN must start with a 2-letter country code");
+        }
+
         if (!iban.matches("[A-Za-z0-9]+")) {
             throw new IllegalArgumentException("IBAN must be alphanumeric");
         }
 
-        if (iban.length() < 8) {
-            throw new IllegalArgumentException("Invalid IBAN format");
-        }
 
         String bankCode = iban.substring(4, 8).toUpperCase().trim();
 

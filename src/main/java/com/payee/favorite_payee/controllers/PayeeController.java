@@ -53,8 +53,8 @@ public class PayeeController {
 	}
 
 	@GetMapping("/")
-	public List<PayeeResponseDTO> getAllPayees(@RequestParam(required = false) Integer pageNumber, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) Boolean isFavorite) {
-		return payeeService.getPayeesPaginated(1L, pageNumber, pageSize, isFavorite);
+	public List<PayeeResponseDTO> getAllPayees(@RequestParam(required = false) Integer pageNumber, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) Boolean favorite) {
+		return payeeService.getPayeesPaginated(1L, pageNumber, pageSize, favorite);
 	}
 
 	@GetMapping("/{id}")
