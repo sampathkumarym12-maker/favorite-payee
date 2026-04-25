@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -52,8 +51,8 @@ public class PayeeController {
 	}
 
 	@GetMapping
-	public List<PayeeResponseDTO> getAllPayees() {
-		return payeeService.getAllPayees(1L);
+	public List<PayeeResponseDTO> getAllPayees(@RequestParam Integer pageNumber, @RequestParam Integer pageSize, @RequestParam Boolean isFavorite) {
+		return payeeService.getPayeesPaginated(1L, pageNumber, pageSize, isFavorite);
 	}
 
 	@GetMapping("/{id}")
@@ -61,9 +60,5 @@ public class PayeeController {
 		return  payeeService.getPayeeById(id);
 	}
 
-	@PatchMapping("/{id}/favorite")
-	public PayeeResponseDTO toggleFavorite(@PathVariable Long id, @RequestParam Boolean isFavorite) {
 
-		return payeeService.toggleFavorite(id, isFavorite);
-	}
 }

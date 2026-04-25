@@ -6,9 +6,13 @@ import com.payee.favorite_payee.models.CustomerModel;
 import com.payee.favorite_payee.models.PayeeModel;
 import com.payee.favorite_payee.repository.BankCodeMappingRepository;
 import com.payee.favorite_payee.repository.PayeeRepository;
+import com.payee.favorite_payee.services.CustomerService;
 import com.payee.favorite_payee.services.PayeeService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -21,6 +25,8 @@ import java.util.stream.Collectors;
 public class PayeeServiceImpl implements PayeeService {
 
     private final PayeeRepository payeeRepository;
+
+    private final CustomerService customerService;
     
     private final BankCodeMappingRepository bankRepo;
 
@@ -31,12 +37,12 @@ public class PayeeServiceImpl implements PayeeService {
 
         PayeeModel payee = new PayeeModel();
         payee.setAccountName(request.getAccountName());
-        payee.setNickname(request.getNickname());
+        payee.setNickname(request.getNickName());
         payee.setIban(request.getIban());
         payee.setBankName(bankName); 
         payee.setIsFavorite(false);
         payee.setIsDeleted(false);
-        payee.setCustomerModel(request.getCustomerId());
+        payee.setCustomerModel(customerService.getCustomerModelById(request.getCustomerId()));
 
         return mapToDTO(payeeRepository.save(payee));
     }
@@ -48,7 +54,7 @@ public class PayeeServiceImpl implements PayeeService {
                 .orElseThrow(() -> new EntityNotFoundException("Payee not found"));
 
         payee.setAccountName(request.getAccountName());
-        payee.setNickname(request.getNickname());
+        payee.setNickname(request.getNickName());
 
         if (request.getIban() != null) {
             String bankName = validateAndGetBankName(request.getIban());
@@ -74,32 +80,33 @@ public class PayeeServiceImpl implements PayeeService {
     }
 
     @Override
-    public List<PayeeResponseDTO> getAllPayees(Long customerId) {
+    public List<PayeeResponseDTO> getPayeesPaginated(Long customerId, Integer pageNumber, Integer pageSize, Boolean isFavorite) {
 
-        return payeeRepository.findByCustomerModelIdAndIsDeletedFalse(customerId)
-                .stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+        int page = (pageNumber == null) ? 0 : pageNumber;
+        int size = (pageSize == null) ? 20 : pageSize;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("isFavorite").descending());
+
+        if(isFavorite != null){
+            return mapToDTOList(payeeRepository.findByCustomerModel_IdAndIsDeletedFalseAndIsFavorite(customerId, isFavorite, pageable).getContent());
+        }
+
+        return mapToDTOList(payeeRepository.findByCustomerModel_IdAndIsDeletedFalse(customerId,pageable).getContent());
     }
 
-//    @Override
-//    public PayeeResponseDTO toggleFavorite(Long id, Boolean isFavorite) {
-//
-//        PayeeModel payee = payeeRepository.findById(id)
-//                .orElseThrow(() -> new EntityNotFoundException("Payee not found"));
-//
-//        payee.setIsFavorite(isFavorite);
-//
-//        return mapToDTO(payeeRepository.save(payee));
-//    }
 
     @Override
     public PayeeResponseDTO getPayeeById(Long id) {
+         PayeeModel payeeModel = getPayeeModelById(id);
+         return mapToDTO(payeeModel);
+    }
 
-         PayeeModel payeeModel = payeeRepository.findById(id)
+    @Override
+    public PayeeModel getPayeeModelById(Long id) {
+
+        return payeeRepository.findById(id)
                 .orElseThrow(() -> new HttpStatusCodeException(HttpStatus.NOT_FOUND, "Payee not found") {
                 });
-         return mapToDTO(payeeModel);
     }
 
     private PayeeResponseDTO mapToDTO(PayeeModel payee) {
@@ -110,6 +117,18 @@ public class PayeeServiceImpl implements PayeeService {
                 .iban(payee.getIban())
                 .isFavorite(payee.getIsFavorite())
                 .build();
+    }
+
+    private List<PayeeResponseDTO> mapToDTOList(List<PayeeModel> payees) {
+        return payees.stream()
+                .map(payee -> PayeeResponseDTO.builder()
+                        .id(payee.getId())
+                        .accountName(payee.getAccountName())
+                        .nickname(payee.getNickname())
+                        .iban(payee.getIban())
+                        .isFavorite(payee.getIsFavorite())
+                        .build())
+                .collect(Collectors.toList());
     }
     
     private String validateAndGetBankName(String iban) {
