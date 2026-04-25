@@ -35,7 +35,7 @@ public class PayeeServiceImpl implements PayeeService {
 
         PayeeModel payee = new PayeeModel();
         payee.setAccountName(request.getAccountName());
-        payee.setNickname(request.getNickname());
+        payee.setNickname(request.getNickName());
         payee.setIban(request.getIban());
         payee.setBankName(bankName); 
         payee.setIsFavorite(false);
@@ -52,7 +52,7 @@ public class PayeeServiceImpl implements PayeeService {
                 .orElseThrow(() -> new EntityNotFoundException("Payee not found"));
 
         payee.setAccountName(request.getAccountName());
-        payee.setNickname(request.getNickname());
+        payee.setNickname(request.getNickName());
 
         if (request.getIban() != null) {
             String bankName = validateAndGetBankName(request.getIban());
@@ -92,18 +92,6 @@ public class PayeeServiceImpl implements PayeeService {
         return mapToDTOList(payeeRepository.findByCustomerModel_IdAndIsDeletedFalse(customerId,pageable).getContent());
     }
 
-
-
-//    @Override
-//    public PayeeResponseDTO toggleFavorite(Long id, Boolean isFavorite) {
-//
-//        PayeeModel payee = payeeRepository.findById(id)
-//                .orElseThrow(() -> new EntityNotFoundException("Payee not found"));
-//
-//        payee.setIsFavorite(isFavorite);
-//
-//        return mapToDTO(payeeRepository.save(payee));
-//    }
 
     @Override
     public PayeeResponseDTO getPayeeById(Long id) {

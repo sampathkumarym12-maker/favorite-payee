@@ -51,7 +51,7 @@ public class PayeeController {
 	}
 
 	@GetMapping
-	public List<PayeeResponseDTO> getAllPayees(@RequestParam Long pageNumber, @RequestParam Long pageSize, @RequestParam Boolean isFavorite) {
+	public List<PayeeResponseDTO> getAllPayees(@RequestParam Integer pageNumber, @RequestParam Integer pageSize, @RequestParam Boolean isFavorite) {
 		return payeeService.getPayeesPaginated(1L, pageNumber, pageSize, isFavorite);
 	}
 
@@ -60,11 +60,5 @@ public class PayeeController {
 		return  payeeService.getPayeeById(id);
 	}
 
-
-//	@PatchMapping("/{id}/favorite")
-//	public PayeeResponseDTO toggleFavorite(@PathVariable Long id, @RequestParam Boolean isFavorite) {
-//
-//		return payeeService.toggleFavorite(id, isFavorite);
-//	}
 
 }
