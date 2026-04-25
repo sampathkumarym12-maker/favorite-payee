@@ -2,13 +2,14 @@ package com.payee.favorite_payee.services.impl;
 
 import com.payee.favorite_payee.dto.PayeeRequestDTO;
 import com.payee.favorite_payee.dto.PayeeResponseDTO;
+import com.payee.favorite_payee.models.CustomerModel;
 import com.payee.favorite_payee.models.PayeeModel;
 import com.payee.favorite_payee.repository.BankCodeMappingRepository;
 import com.payee.favorite_payee.repository.PayeeRepository;
+import com.payee.favorite_payee.services.CustomerService;
 import com.payee.favorite_payee.services.PayeeService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 public class PayeeServiceImpl implements PayeeService {
 
     private final PayeeRepository payeeRepository;
+
+    private final CustomerService customerService;
     
     private final BankCodeMappingRepository bankRepo;
 
@@ -40,7 +42,7 @@ public class PayeeServiceImpl implements PayeeService {
         payee.setBankName(bankName); 
         payee.setIsFavorite(false);
         payee.setIsDeleted(false);
-        payee.setCustomerModel(request.getCustomerId());
+        payee.setCustomerModel(customerService.getCustomerModelById(request.getCustomerId()));
 
         return mapToDTO(payeeRepository.save(payee));
     }
@@ -95,11 +97,16 @@ public class PayeeServiceImpl implements PayeeService {
 
     @Override
     public PayeeResponseDTO getPayeeById(Long id) {
+         PayeeModel payeeModel = getPayeeModelById(id);
+         return mapToDTO(payeeModel);
+    }
 
-         PayeeModel payeeModel = payeeRepository.findById(id)
+    @Override
+    public PayeeModel getPayeeModelById(Long id) {
+
+        return payeeRepository.findById(id)
                 .orElseThrow(() -> new HttpStatusCodeException(HttpStatus.NOT_FOUND, "Payee not found") {
                 });
-         return mapToDTO(payeeModel);
     }
 
     private PayeeResponseDTO mapToDTO(PayeeModel payee) {

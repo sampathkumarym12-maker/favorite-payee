@@ -10,6 +10,6 @@ public class PayeeRequestDTO {
 	private String nickName;
 	private String iban;
 	private String bankName;
-	private String customerId;
+	private Long customerId;
 	private Boolean isFavorite;
 }

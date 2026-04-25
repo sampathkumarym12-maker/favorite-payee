@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.payee.favorite_payee.dto.PayeeRequestDTO;
 import com.payee.favorite_payee.dto.PayeeResponseDTO;
+import com.payee.favorite_payee.models.PayeeModel;
 
 public interface PayeeService {
 
@@ -16,4 +17,6 @@ public interface PayeeService {
     List<PayeeResponseDTO> getPayeesPaginated(Long customerId, Integer pageNumber, Integer pageSize, Boolean isFavorite);
 
     PayeeResponseDTO getPayeeById(Long id);
+
+    PayeeModel getPayeeModelById(Long id);
 }
