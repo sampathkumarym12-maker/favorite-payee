@@ -3,11 +3,9 @@ package com.payee.favorite_payee.services.impl;
 import com.payee.favorite_payee.models.CustomerModel;
 import com.payee.favorite_payee.repository.CustomerRepository;
 import com.payee.favorite_payee.services.CustomerService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
