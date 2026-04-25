@@ -2,17 +2,21 @@ package com.payee.favorite_payee.services.impl;
 
 import com.payee.favorite_payee.dto.PayeeRequestDTO;
 import com.payee.favorite_payee.dto.PayeeResponseDTO;
-import com.payee.favorite_payee.models.CustomerModel;
 import com.payee.favorite_payee.models.PayeeModel;
 import com.payee.favorite_payee.repository.BankCodeMappingRepository;
 import com.payee.favorite_payee.repository.PayeeRepository;
 import com.payee.favorite_payee.services.PayeeService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,13 +78,21 @@ public class PayeeServiceImpl implements PayeeService {
     }
 
     @Override
-    public List<PayeeResponseDTO> getAllPayees(Long customerId) {
+    public List<PayeeResponseDTO> getPayeesPaginated(Long customerId, Integer pageNumber, Integer pageSize, Boolean isFavorite) {
 
-        return payeeRepository.findByCustomerModelIdAndIsDeletedFalse(customerId)
-                .stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+        int page = (pageNumber == null) ? 0 : pageNumber;
+        int size = (pageSize == null) ? 20 : pageSize;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("isFavorite").descending());
+
+        if(isFavorite != null){
+            return mapToDTOList(payeeRepository.findByCustomerModel_IdAndIsDeletedFalseAndIsFavorite(customerId, isFavorite, pageable).getContent());
+        }
+
+        return mapToDTOList(payeeRepository.findByCustomerModel_IdAndIsDeletedFalse(customerId,pageable).getContent());
     }
+
+
 
 //    @Override
 //    public PayeeResponseDTO toggleFavorite(Long id, Boolean isFavorite) {
@@ -110,6 +122,18 @@ public class PayeeServiceImpl implements PayeeService {
                 .iban(payee.getIban())
                 .isFavorite(payee.getIsFavorite())
                 .build();
+    }
+
+    private List<PayeeResponseDTO> mapToDTOList(List<PayeeModel> payees) {
+        return payees.stream()
+                .map(payee -> PayeeResponseDTO.builder()
+                        .id(payee.getId())
+                        .accountName(payee.getAccountName())
+                        .nickname(payee.getNickname())
+                        .iban(payee.getIban())
+                        .isFavorite(payee.getIsFavorite())
+                        .build())
+                .collect(Collectors.toList());
     }
     
     private String validateAndGetBankName(String iban) {

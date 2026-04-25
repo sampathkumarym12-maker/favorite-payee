@@ -13,9 +13,11 @@ public interface PayeeService {
 
     void deletePayee(Long id);
 
-    List<PayeeResponseDTO> getAllPayees(Long customerId);
+    List<PayeeResponseDTO> getPayeesPaginated(Long customerId, Long pageNumber, Long pageSize, Boolean isFavorite);
 
 //    PayeeResponseDTO toggleFavorite(Long id, Boolean isFavorite);
+
+    List<PayeeResponseDTO> getPayeesPaginated(Long customerId, Integer pageNumber, Integer pageSize, Boolean isFavorite);
 
     PayeeResponseDTO getPayeeById(Long id);
 }
