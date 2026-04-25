@@ -15,5 +15,7 @@ public interface PayeeService {
 
     List<PayeeResponseDTO> getAllPayees(Long customerId);
 
-    PayeeResponseDTO toggleFavorite(Long id, Boolean isFavorite);
+//    PayeeResponseDTO toggleFavorite(Long id, Boolean isFavorite);
+
+    PayeeResponseDTO getPayeeById(Long id);
 }

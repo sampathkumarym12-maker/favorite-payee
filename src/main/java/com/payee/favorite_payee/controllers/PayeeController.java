@@ -50,6 +50,11 @@ public class PayeeController {
 		return payeeService.getAllPayees(1L);
 	}
 
+	@GetMapping("/{id}")
+	public PayeeResponseDTO getPayee(@PathVariable Long id){
+		return  payeeService.getPayeeById(id);
+	}
+
 	@PatchMapping("/{id}/favorite")
 	public PayeeResponseDTO toggleFavorite(@PathVariable Long id, @RequestParam Boolean isFavorite) {
 
